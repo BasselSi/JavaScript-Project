@@ -1,3 +1,4 @@
+// "use client";
 import React from "react";
 import Link from "next/link";
 
@@ -8,7 +9,7 @@ const NavBar = () => {
     { label: "Premium Page", href: "/premium", className: "btn btn-secondary" },
   ];
   return (
-    <nav className="flex space-x-5 border p-2 bg-gray-100">
+    <nav className={"flex space-x-5 border p-2 bg-gray-100"}>
       {links.map((link) => (
         <Link
           key={link.href}
