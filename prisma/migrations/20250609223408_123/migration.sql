@@ -1,14 +1,12 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "isPremium" BOOLEAN NOT NULL DEFAULT false
+    "isPremium" BOOLEAN NOT NULL DEFAULT false,
+    "premiumAt" DATETIME
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");

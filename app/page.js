@@ -1,16 +1,19 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 import prisma from "@/prisma/user";
 
-const SECRET = new TextEncoder().encode(
-  process.env.SESSION_SECRET || "super-secret-key-change-me"
-);
+const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET);
 
 export default async function HomePage() {
-  // Get the session token from cookies
   const sessionCookie = (await cookies().get("session"))?.value;
 
+  if (!sessionCookie) {
+    redirect("/login");
+  }
+
   let userName = "Guest";
+  let isAuthenticated = false;
   if (sessionCookie) {
     try {
       const { payload } = await jwtVerify(sessionCookie, SECRET);
@@ -20,11 +23,20 @@ export default async function HomePage() {
         });
         if (user) {
           userName = user.name;
+          isAuthenticated = true;
         }
       }
-    } catch {
-      // Invalid token, keep userName as "Guest"
+    } catch (error) {
+      console.error("Session verification failed:", error);
+      // If session verification fails, we treat the user as unauthenticated
+      isAuthenticated = false;
+      userName = "Guest";
+      redirect("/login");
     }
+  }
+
+  if (!isAuthenticated) {
+    redirect("/login");
   }
 
   return (

@@ -4,9 +4,7 @@ import prisma from "@/prisma/user";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
-const SECRET = new TextEncoder().encode(
-  process.env.SESSION_SECRET || "super-secret-key-change-me"
-);
+const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET);
 
 export async function loginAction(prevState, formData) {
   const email = formData.get("email");

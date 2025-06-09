@@ -3,14 +3,20 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const NavBar = () => {
+const NavBar = ({ isPremium }) => {
   const router = useRouter();
   const links = [
     { label: "Home", href: "/", className: "btn btn-primary" },
-    { label: "Free Page", href: "/free", className: "btn btn-secondary" },
-    // { label: "Premium Page", href: "/premium", className: "btn btn-secondary" },
-    { label: "Browse Users", href: "/users", className: "btn btn-secondary" },
+    { label: "Profile", href: "/profile", className: "btn btn-secondary" },
   ];
+
+  if (isPremium) {
+    links.push({
+      label: "Premium Page",
+      href: "/premium",
+      className: "btn btn-warning",
+    });
+  }
 
   return (
     <nav className="flex items-center justify-between border p-2 bg-gray-100">

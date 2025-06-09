@@ -3,12 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-export default function DeleteUserPage({ params }) {
-  // Unwrap params if it's a Promise (future-proof)
-  const actualParams =
-    typeof params.then === "function" ? React.use(params) : params;
-  const id = actualParams.id;
-
+export default function DeleteUserPage() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -16,26 +11,28 @@ export default function DeleteUserPage({ params }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/users/${id}`);
+        const res = await fetch("/api/users/me");
         if (!res.ok) throw new Error("Failed to fetch user");
         const user = await res.json();
         setUsername(user.name);
       } catch {
-        alert("User not found.");
-        router.push("/users");
+        alert("User not found or not logged in.");
+        router.push("/login");
       } finally {
         setLoading(false);
       }
     };
     fetchUser();
-  }, [id, router]);
+  }, [router]);
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+      const res = await fetch("/api/users/me", { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete user");
       alert("User deleted successfully!");
-      router.push("/users");
+      console.log(`User ${username} deleted successfully.`);
+      // Redirect to login page after deletion
+      window.location.href = "/login";
     } catch {
       alert("Failed to delete user.");
     }
@@ -45,9 +42,9 @@ export default function DeleteUserPage({ params }) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <span>
-        Are you sure you want to delete user <b>{username}</b>?
-      </span>
+      <span>Are you sure you want to delete your profile?</span>
+      <br />
+      <span className="text-red-500">This action cannot be undone.</span>
       <button className="btn btn-error mt-4" onClick={handleDelete}>
         Delete
       </button>

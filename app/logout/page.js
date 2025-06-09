@@ -11,5 +11,6 @@ export default function LogoutPage() {
     });
   }, [router]);
 
+  console.log("User logged out successfully.");
   return <p>Logging out...</p>;
 }

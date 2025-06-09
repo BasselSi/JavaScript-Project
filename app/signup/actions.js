@@ -54,5 +54,6 @@ export async function signupAction(prevState, formData) {
   });
 
   await createSession(user.id);
+  console.log(`User ${user.name} created successfully.`);
   return { success: true };
 }
