@@ -6,18 +6,32 @@ import prisma from "@/prisma/user";
 import { createSession } from "@/app/lib/sessions";
 
 export async function signupAction(prevState, formData) {
+  const name = formData.get("name");
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const repeatPassword = formData.get("repeatPassword");
+
+  // Check if passwords match
+  if (password !== repeatPassword) {
+    return {
+      errors: { passwordMatch: "Passwords do not match" },
+      name,
+      email,
+    };
+  }
+
   const validationResult = SignupFormSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
+    name,
+    email,
+    password,
   });
   if (!validationResult.success) {
     return {
       errors: validationResult.error.flatten().fieldErrors,
+      name,
+      email,
     };
   }
-
-  const { name, email, password } = validationResult.data;
 
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({ where: { email } });

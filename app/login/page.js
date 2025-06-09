@@ -22,6 +22,7 @@ export default function LoginForm() {
           placeholder="Email"
           className="input input-bordered"
           required
+          defaultValue={state?.email || ""}
         />
         {state?.errors?.email && (
           <div className="text-red-500">{state.errors.email}</div>
@@ -32,6 +33,7 @@ export default function LoginForm() {
           placeholder="Password"
           className="input input-bordered"
           required
+          autoComplete="current-password"
         />
         <button type="submit" className="btn btn-primary">
           Sign In

@@ -15,13 +15,13 @@ export async function loginAction(prevState, formData) {
   // Find user by email
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    return { error: "Invalid credentials" };
+    return { error: "Invalid credentials", email };
   }
 
   // Compare password
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) {
-    return { error: "Invalid credentials" };
+    return { error: "Invalid credentials", email };
   }
 
   // Create a JWT session
