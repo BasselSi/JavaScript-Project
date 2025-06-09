@@ -22,7 +22,6 @@ export default function UsersPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isPremium: true }),
     });
-    // Update the user in state immediately for instant UI feedback
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === id ? { ...user, isPremium: true } : user
@@ -44,6 +43,7 @@ export default function UsersPage() {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
           </Table.Row>
@@ -53,6 +53,9 @@ export default function UsersPage() {
             <Table.Row key={user.id}>
               <Table.Cell>
                 <span>{user.name}</span>
+              </Table.Cell>
+              <Table.Cell>
+                <span>{user.email}</span>
               </Table.Cell>
               <Table.Cell>
                 {user.isPremium ? "Premium User" : "User"}
