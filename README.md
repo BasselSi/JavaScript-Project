@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Payment Simulation App
+
+This is a [Next.js](https://nextjs.org) full-stack project that simulates a user payment and premium access system. It demonstrates authentication, premium feature gating, and secure user management using modern Next.js features.
+
+---
+
+## Features
+
+- **User Authentication**: Secure login and session management using cookies and JWT.
+- **Profile Management**: Sign up, view your profile, upgrade to premium, or delete your account.
+- **Premium Access**: Users can purchase premium access via a simulated payment form. Premium users see extra navigation and can access `/premium`.
+- **Secure API**: All sensitive actions (profile, payment, delete) are protected and require authentication.
+- **Radix UI & Bootstrap**: Modern, accessible UI components.
+- **Prisma ORM**: Type-safe database access.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 2. Set up your environment
+
+Create a `.env` file in the root directory with at least:
+
+```
+SESSION_SECRET=your-very-secret-key
+DATABASE_URL=your-database-url
+```
+
+### 3. Set up the database
+
+Edit your `prisma/schema.prisma` to match:
+
+```prisma
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  isPremium  Boolean  @default(false)
+  premiumAt  DateTime?
+}
+```
+
+Then run:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+### 4. Run the development server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Usage
 
-## Learn More
+- **Sign Up / Log In**: Create an account or log in.
+- **Profile**: View your details. If not premium, you can upgrade.
+- **Payment**: Enter credit card details (simulated, no real payment). On success, you become a premium user.
+- **Premium Page**: Only visible and accessible to premium users.
+- **Delete Account**: Permanently delete your account (with confirmation).
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/
+  api/
+    users/
+      me/
+        route.js      # API for current user (GET, DELETE)
+    logout/
+      route.js        # API for logging out
+  payment/
+    page.js           # Payment form and logic
+    actions.js        # Server actions for payment
+  premium/
+    page.js           # Premium-only content
+  profile/
+    page.js           # User profile
+    delete/
+      page.js         # Delete account page
+  navbar.js           # Navigation bar
+  layout.js           # Root layout
+  page.js             # Home page (requires authentication)
+prisma/
+  schema.prisma       # Prisma schema
+.env                  # Environment variables
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Security Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- All sensitive actions require authentication via a secure session cookie.
+- Premium status and user deletion are only possible for the logged-in user.
+- Never expose secrets or sensitive data in the UI or codebase.
