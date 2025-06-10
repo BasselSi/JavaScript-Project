@@ -1,6 +1,6 @@
 # Payment Simulation App
 
-This is a [Next.js](https://nextjs.org) full-stack project that simulates a user payment and premium access system. It demonstrates authentication, premium feature gating, and secure user management using modern Next.js features.
+This is a [Next.js](https://nextjs.org) full-stack project that simulates a user payment and premium access system. It demonstrates authentication, premium feature gating, secure user management, and a personal notes feature for premium users using modern Next.js features.
 
 ---
 
@@ -9,7 +9,8 @@ This is a [Next.js](https://nextjs.org) full-stack project that simulates a user
 - **User Authentication**: Secure login and session management using cookies and JWT.
 - **Profile Management**: Sign up, view your profile, upgrade to premium, or delete your account.
 - **Premium Access**: Users can purchase premium access via a simulated payment form. Premium users see extra navigation and can access `/premium`.
-- **Secure API**: All sensitive actions (profile, payment, delete) are protected and require authentication.
+- **Personal Notes**: Premium users can create, view, and delete personal notes on the `/premium` page. Notes are stored securely in the database and only visible to their owner.
+- **Secure API**: All sensitive actions (profile, payment, notes, delete) are protected and require authentication.
 - **Radix UI & Bootstrap**: Modern, accessible UI components.
 - **Prisma ORM**: Type-safe database access.
 
@@ -46,6 +47,15 @@ model User {
   password   String
   isPremium  Boolean  @default(false)
   premiumAt  DateTime?
+  notes      Note[]
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 ```
 
@@ -73,6 +83,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **Profile**: View your details. If not premium, you can upgrade.
 - **Payment**: Enter credit card details (simulated, no real payment). On success, you become a premium user.
 - **Premium Page**: Only visible and accessible to premium users.
+  - **Notes**: As a premium user, you can write, view, and delete your own notes using a simple text editor. Notes are saved to the database and persist across sessions.
 - **Delete Account**: Permanently delete your account (with confirmation).
 
 ---
@@ -85,13 +96,19 @@ app/
     users/
       me/
         route.js      # API for current user (GET, DELETE)
+    notes/
+      route.js        # API for creating notes (POST)
+      [id]/
+        route.js      # API for deleting a note (DELETE)
     logout/
       route.js        # API for logging out
   payment/
     page.js           # Payment form and logic
     actions.js        # Server actions for payment
   premium/
-    page.js           # Premium-only content
+    page.js           # Premium-only content and notes loader
+    Notes.js          # Client component for notes UI
+    actions.js        # Server actions for notes
   profile/
     page.js           # User profile
     delete/
@@ -109,5 +126,6 @@ prisma/
 ## Security Notes
 
 - All sensitive actions require authentication via a secure session cookie.
-- Premium status and user deletion are only possible for the logged-in user.
+- Premium status, notes, and user deletion are only possible for the logged-in user.
+- Notes are only accessible to their owner.
 - Never expose secrets or sensitive data in the UI or codebase.
