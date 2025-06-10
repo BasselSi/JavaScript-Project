@@ -1,9 +1,20 @@
 "use client";
 import { signupAction } from "./actions";
 import { useActionState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SignUpForm() {
   const [state, action, pending] = useActionState(signupAction);
+
+  // Keep the latest entered values in local state for name and email
+  const [name, setName] = useState(state?.name || "");
+  const [email, setEmail] = useState(state?.email || "");
+
+  // Update local state if the server returns new values (e.g., after a failed submit)
+  useEffect(() => {
+    if (state?.name !== undefined) setName(state.name);
+    if (state?.email !== undefined) setEmail(state.email);
+  }, [state?.name, state?.email]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -14,7 +25,8 @@ export default function SignUpForm() {
             name="name"
             placeholder="Your name"
             className="input input-bordered border border-black"
-            defaultValue={state?.name || ""}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           {state?.errors?.name && (
             <div className="text-red-500">{state.errors.name}</div>
@@ -27,7 +39,8 @@ export default function SignUpForm() {
             type="email"
             placeholder="Your email"
             className="input input-bordered border border-black"
-            defaultValue={state?.email || ""}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           {state?.errors?.email && (
             <div className="text-red-500">{state.errors.email}</div>

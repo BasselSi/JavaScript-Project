@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { setPremium } from "./actions";
 
@@ -35,13 +36,14 @@ export default function PaymentPage() {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setSuccess(false);
 
@@ -52,7 +54,7 @@ export default function PaymentPage() {
       return;
     }
 
-    setPremium(form); // Assuming setPremium is a function that handles the payment
+    await setPremium(form); // Assuming setPremium is a function that handles the payment
     setSuccess(true);
     setError("");
   }
@@ -116,9 +118,19 @@ export default function PaymentPage() {
         </label>
         {error && <div className="text-red-500">{error}</div>}
         {success && <div className="text-green-600">Payment submitted!</div>}
-        <button className="btn btn-primary mt-2" type="submit">
-          Pay
-        </button>
+        {!success ? (
+          <button className="btn btn-primary mt-2" type="submit">
+            Pay
+          </button>
+        ) : (
+          <button
+            className="btn btn-success mt-2"
+            type="button"
+            onClick={() => (window.location.href = "/profile")}
+          >
+            Go to Profile
+          </button>
+        )}
       </form>
     </div>
   );

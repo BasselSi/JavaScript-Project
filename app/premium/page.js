@@ -6,7 +6,7 @@ import Notes from "./Notes"; // Client component
 const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET);
 
 export default async function PremiumPage() {
-  const sessionCookie = (await cookies().get("session"))?.value;
+  const sessionCookie = cookies().get("session")?.value;
   let userId = null;
 
   if (sessionCookie) {
