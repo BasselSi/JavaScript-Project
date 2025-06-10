@@ -6,7 +6,7 @@ import prisma from "@/prisma/user";
 const SECRET = new TextEncoder().encode(process.env.SESSION_SECRET);
 
 export default async function HomePage() {
-  const sessionCookie = (await cookies().get("session"))?.value;
+  const sessionCookie = await cookies().get("session")?.value;
 
   if (!sessionCookie) {
     redirect("/login");
